@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:8.0
+    container_name: pokemon-tcg-mongodb
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: pokemon
+      MONGO_INITDB_ROOT_PASSWORD: password
+      MONGO_INITDB_DATABASE: pokemon_tcg
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+      - mongodb_config:/data/configdb
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+volumes:
+  mongodb_data:
+    driver: local
+  mongodb_config:
+    driver: local

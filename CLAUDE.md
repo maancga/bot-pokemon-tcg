@@ -82,3 +82,24 @@ This is a backend bot project built with Node.js v24+ and TypeScript that monito
 - Define repositories for data access layer
 - Inject database connections via Inversify
 - Handle connection lifecycle properly
+
+#### Database Configuration
+
+- Configuration stored in `src/config/infrastructure/config.ts`
+- Environment variables for database connection (see `.env.example`)
+- DI tokens defined in `src/config/domain/Token.ts`
+- MongoDB module in `src/di/mongoModule.ts` for Inversify binding
+
+#### Testing with MongoDB
+
+- Use `setupTestDb()` and `teardownTestDb()` from `src/test-helpers/mongoTestHelpers.ts`
+- Test databases are isolated per pool: `test-${VITEST_POOL_ID}`
+- Import `testMongoModule` instead of `mongoModule` in tests
+- Run MongoDB via Docker: `docker-compose up -d`
+
+### Test Fixtures and Mother Pattern
+
+- Card fixtures defined in `src/test-helpers/fixtures/CardFixtures.ts`
+- Use `CardFixtures.bulbasaurEx()`, `CardFixtures.charizardEx()`, etc. in tests
+- Provides reusable, consistent test data across the codebase
+- Add new fixtures when new card types are needed for testing

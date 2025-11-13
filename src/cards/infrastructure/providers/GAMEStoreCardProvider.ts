@@ -1,6 +1,6 @@
 import puppeteer from "puppeteer";
-import { Card } from "../domain/Card.ts";
-import { CardsProvider } from "../domain/CardsProvider.ts";
+import { Card } from "../../domain/Card";
+import { CardsProvider } from "../../domain/CardsProvider";
 
 export class GAMEStoreCardsProvider implements CardsProvider {
   private readonly url = "https://www.game.es/buscar/pokemon%20tcg";
@@ -26,14 +26,7 @@ export class GAMEStoreCardsProvider implements CardsProvider {
       await new Promise((resolve) => setTimeout(resolve, 5000));
 
       const cards = await page.evaluate(() => {
-        interface CardProvider {
-          title: string;
-          price: string;
-          link: string;
-          imageUrl: string;
-        }
-
-        const results: CardProvider[] = [];
+        const results: Card[] = [];
 
         const selectors = [
           "article",
@@ -74,6 +67,7 @@ export class GAMEStoreCardsProvider implements CardsProvider {
 
             if (title && title.length > 3) {
               results.push({
+                id: title,
                 title,
                 price,
                 link: link.startsWith("http")
