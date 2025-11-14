@@ -26,8 +26,15 @@
     "skipLibCheck": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": false,
-    "types": ["node", "vitest/globals"]
+    "types": ["node", "vitest/globals"],
+    "baseUrl": ".",
+    "paths": {
+      "@tests/*": ["tests/*"]
+    }
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "tests", "**/*.test.ts", "**/*.integration.test.ts"]
+  "include": ["src/**/*", "tests/**/*"],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
 }

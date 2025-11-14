@@ -1,13 +1,13 @@
 import { serve } from "@hono/node-server";
 import { app } from "./app.ts";
-import { config } from "./config/infrastructure/config.ts";
-import { Token } from "./config/domain/Token.ts";
 import { container } from "./container.ts";
+import { Token } from "./shared/config/domain/Token.ts";
+import { config } from "./shared/config/infrastructure/config.ts";
 import type { Logger } from "./shared/loggers/domain/Logger.ts";
 import type { Scheduler } from "./shared/schedulers/domain/Scheduler.ts";
 
 const logger = container.get<Logger>(Token.LOGGER);
-const scheduler = container.get<Scheduler>(Token.SCHEDULER);
+const scheduler = await container.getAsync<Scheduler>(Token.SCHEDULER);
 
 serve(
   {

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { CardFixtures } from "../../../test-helpers/fixtures/CardFixtures.ts";
+import { CardFixtures } from "@tests/helpers/fixtures/CardFixtures.ts";
 import { FakeCardsProvider } from "./FakeCardsProvider.ts";
 
 describe("FakeCardsProvider", () => {

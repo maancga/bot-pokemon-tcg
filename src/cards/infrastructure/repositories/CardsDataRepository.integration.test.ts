@@ -1,10 +1,10 @@
-import { Db, MongoClient } from "mongodb";
-import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { CardFixtures } from "../../../test-helpers/fixtures/CardFixtures.ts";
+import { CardFixtures } from "@tests/helpers/fixtures/CardFixtures.ts";
 import {
   setupTestDb,
   teardownTestDb,
-} from "../../../test-helpers/mongoTestHelpers.ts";
+} from "@tests/helpers/mongoTestHelpers.ts";
+import { Db, MongoClient } from "mongodb";
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import type { Card } from "../../domain/Card.ts";
 import { MongoCardsRepository } from "./CardsDataRepository.ts";
 
@@ -47,12 +47,10 @@ describe("MongoCardsRepository (integration)", () => {
     };
     await repo.save([updatedCharizard]);
 
-    const updated = await db
-      .collection<Card>("cards")
-      .findOne({
-        source: CardFixtures.charizardEx().source,
-        link: CardFixtures.charizardEx().link,
-      });
+    const updated = await db.collection<Card>("cards").findOne({
+      source: CardFixtures.charizardEx().source,
+      link: CardFixtures.charizardEx().link,
+    });
     expect(updated?.price).toBe("PREMIUM");
   });
 

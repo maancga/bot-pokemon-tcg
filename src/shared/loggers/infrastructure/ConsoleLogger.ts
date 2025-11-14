@@ -1,4 +1,4 @@
-import { config } from "../../../config/infrastructure/config.ts";
+import { config } from "../../config/infrastructure/config.ts";
 import type { Logger } from "../domain/Logger.ts";
 
 export class ConsoleLogger implements Logger {

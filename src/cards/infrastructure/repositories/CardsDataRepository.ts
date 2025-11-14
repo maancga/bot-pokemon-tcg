@@ -1,4 +1,4 @@
-import type { interfaces } from "inversify";
+import type { ResolutionContext } from "inversify";
 import { Db } from "mongodb";
 import type { Collection } from "mongodb";
 import type { Card } from "../../domain/Card.ts";
@@ -7,8 +7,8 @@ import type { CardsRepository } from "../../domain/CardsDataRepository.ts";
 export class MongoCardsRepository implements CardsRepository {
   private readonly collection: Collection<Card>;
 
-  static async create({ container }: interfaces.Context) {
-    const db = await container.getAsync<Db>(Db);
+  static async create(context: ResolutionContext) {
+    const db = await context.getAsync<Db>(Db);
     return new MongoCardsRepository(db);
   }
 

@@ -1,5 +1,5 @@
-import type { interfaces } from "inversify";
-import { Token } from "../../config/domain/Token.ts";
+import type { ResolutionContext } from "inversify";
+import { Token } from "../../shared/config/domain/Token.ts";
 import type { Logger } from "../../shared/loggers/domain/Logger.ts";
 import type { Card } from "../domain/Card.ts";
 import type { CardsRepository } from "../domain/CardsDataRepository.ts";
@@ -10,14 +10,14 @@ export class SyncCards {
   private readonly cardRepository: CardsRepository;
   private readonly logger: Logger;
 
-  static async create({ container }: interfaces.Context) {
-    const provider = await container.getAsync<CardsProvider>(
+  static async create(context: ResolutionContext) {
+    const provider = await context.getAsync<CardsProvider>(
       Token.CARDS_PROVIDER
     );
-    const repository = await container.getAsync<CardsRepository>(
+    const repository = await context.getAsync<CardsRepository>(
       Token.CARDS_REPOSITORY
     );
-    const logger = container.get<Logger>(Token.LOGGER);
+    const logger = context.get<Logger>(Token.LOGGER);
     return new SyncCards(provider, repository, logger);
   }
 

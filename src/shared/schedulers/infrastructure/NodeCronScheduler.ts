@@ -1,36 +1,36 @@
-import type { Container, interfaces } from "inversify";
+import type { ResolutionContext } from "inversify";
 import cron from "node-cron";
 import { SyncCards } from "../../../cards/use-cases/SyncCards.ts";
-import { config } from "../../../config/infrastructure/config.ts";
-import { Token } from "../../../config/domain/Token.ts";
+import { Token } from "../../config/domain/Token.ts";
+import { config } from "../../config/infrastructure/config.ts";
 import type { Logger } from "../../loggers/domain/Logger.ts";
 import type { Scheduler } from "../domain/Scheduler.ts";
 
 export class NodeCronScheduler implements Scheduler {
-  private readonly container: Container;
+  private readonly syncCardsUseCase: SyncCards;
   private readonly logger: Logger;
 
-  static create({ container }: interfaces.Context) {
-    const logger = container.get<Logger>(Token.LOGGER);
-    return new NodeCronScheduler(container, logger);
+  static async create(context: ResolutionContext) {
+    const logger = context.get<Logger>(Token.LOGGER);
+    const syncCardsUseCase = await context.getAsync<SyncCards>(SyncCards);
+    return new NodeCronScheduler(syncCardsUseCase, logger);
   }
 
-  constructor(container: Container, logger: Logger) {
-    this.container = container;
+  constructor(syncCardsUseCase: SyncCards, logger: Logger) {
+    this.syncCardsUseCase = syncCardsUseCase;
     this.logger = logger;
   }
 
   start(): void {
-    this.logger.info(`Scheduling card sync job: ${config.scheduler.cronSchedule}`);
+    this.logger.info(
+      `Scheduling card sync job: ${config.scheduler.cronSchedule}`
+    );
 
     cron.schedule(config.scheduler.cronSchedule, async () => {
       this.logger.info(`Cron job triggered at ${new Date().toISOString()}`);
 
       try {
-        const syncCardsUseCase = await this.container.getAsync<SyncCards>(
-          Token.SYNC_CARDS_USE_CASE
-        );
-        await syncCardsUseCase.execute();
+        await this.syncCardsUseCase.execute();
         this.logger.info("Cron job completed successfully");
       } catch (error) {
         this.logger.error("Cron job failed:", error);
@@ -48,10 +48,7 @@ export class NodeCronScheduler implements Scheduler {
     this.logger.info("Running initial sync on startup...");
 
     try {
-      const syncCardsUseCase = await this.container.getAsync<SyncCards>(
-        Token.SYNC_CARDS_USE_CASE
-      );
-      await syncCardsUseCase.execute();
+      await this.syncCardsUseCase.execute();
       this.logger.info("Initial sync completed");
     } catch (error) {
       this.logger.error("Initial sync failed:", error);
