@@ -17,7 +17,7 @@ import { NodeCronScheduler } from "./shared/schedulers/infrastructure/NodeCronSc
 export const container = new Container();
 
 // App
-container.bind<Hono>(Token.APP).toDynamicValue(createHono);
+container.bind<Hono>(Token.APP).toDynamicValue((context) => createHono(context));
 container.bind<Logger>(Token.LOGGER).toDynamicValue(ConsoleLogger.create);
 container
   .bind<Scheduler>(Token.SCHEDULER)
