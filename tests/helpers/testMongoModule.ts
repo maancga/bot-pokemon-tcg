@@ -1,10 +1,10 @@
 import { ContainerModule } from "inversify";
 import { Db, MongoClient } from "mongodb";
-import { Token } from "../config/domain/Token.ts";
+import { Token } from "../../src/shared/config/domain/Token.ts";
 import {
   createDb,
   createMongoClient,
-} from "../shared/persistence/infrastructure/CreateMongoClient.ts";
+} from "../../src/shared/persistence/infrastructure/CreateMongoClient.ts";
 import { testMongoConfig } from "./testMongoConfig.ts";
 
 export const testMongoModule = new ContainerModule((bind) => {

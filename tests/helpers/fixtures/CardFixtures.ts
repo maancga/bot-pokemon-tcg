@@ -1,4 +1,4 @@
-import type { Card } from "../../cards/domain/Card.ts";
+import type { Card } from "../../../src/cards/domain/Card.ts";
 
 /**
  * Card Mother pattern - provides reusable test card instances

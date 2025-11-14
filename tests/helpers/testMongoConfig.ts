@@ -1,7 +1,7 @@
 import {
   config,
   type DatabaseConfig,
-} from "../config/infrastructure/config.ts";
+} from "../../src/shared/config/infrastructure/config.ts";
 
 export const testMongoConfig: DatabaseConfig = {
   ...config.db,
