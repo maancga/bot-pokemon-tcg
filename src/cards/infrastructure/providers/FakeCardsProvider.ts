@@ -1,5 +1,5 @@
-import { Card } from "../../domain/Card";
-import { CardsProvider } from "../../domain/CardsProvider";
+import type { Card } from "../../domain/Card.ts";
+import type { CardsProvider } from "../../domain/CardsProvider.ts";
 
 export class FakeCardsProvider implements CardsProvider {
   private cards: Card[];

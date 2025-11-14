@@ -1,10 +1,25 @@
-// Application entrypoint
-// TODO: Initialize DI container
-// TODO: Start Hono server
-// TODO: Initialize cron jobs
+import { serve } from "@hono/node-server";
+import { app } from "./app.ts";
+import { config } from "./config/infrastructure/config.ts";
+import { Token } from "./config/domain/Token.ts";
+import { container } from "./container.ts";
+import type { Logger } from "./shared/loggers/domain/Logger.ts";
+import type { Scheduler } from "./shared/schedulers/domain/Scheduler.ts";
 
-import { Hono } from "hono";
+const logger = container.get<Logger>(Token.LOGGER);
+const scheduler = container.get<Scheduler>(Token.SCHEDULER);
 
-console.log("Pokemon TCG Bot starting...");
+serve(
+  {
+    fetch: app.fetch,
+    port: config.app.port,
+  },
+  (info) => {
+    logger.info(`Server running at http://localhost:${info.port}`);
+  }
+);
 
-new Hono();
+scheduler.start();
+await scheduler.runInitialSync();
+
+logger.info("Pokemon TCG Bot fully initialized and running");

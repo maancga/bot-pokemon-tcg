@@ -1,15 +1,21 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import { Card } from "../domain/Card.ts";
+import { FakeLogger } from "../../shared/loggers/infrastructure/FakeLogger.ts";
+import type { Card } from "../domain/Card.ts";
 import { FakeCardsProvider } from "../infrastructure/providers/FakeCardsProvider.ts";
+import { FakeCardsRepository } from "../infrastructure/repositories/FakeCardsRepository.ts";
 import { SyncCards } from "./SyncCards.ts";
 
 describe("SyncDataUseCase", () => {
   let fakeProvider: FakeCardsProvider;
+  let fakeRepository: FakeCardsRepository;
+  let fakeLogger: FakeLogger;
   let useCase: SyncCards;
 
   beforeEach(() => {
     fakeProvider = new FakeCardsProvider();
-    useCase = new SyncCards(fakeProvider);
+    fakeRepository = new FakeCardsRepository();
+    fakeLogger = new FakeLogger();
+    useCase = new SyncCards(fakeProvider, fakeRepository, fakeLogger);
   });
 
   it("should fetch cards from data provider", async () => {
@@ -69,5 +75,28 @@ describe("SyncDataUseCase", () => {
     const cards = await useCase.execute();
 
     expect(cards).toEqual([]);
+  });
+
+  it("should save fetched cards to repository", async () => {
+    const cards = await useCase.execute();
+
+    expect(fakeRepository.getSavedCards()).toEqual(cards);
+  });
+
+  it("should log progress during execution", async () => {
+    await useCase.execute();
+
+    expect(fakeLogger.logs).toContain(
+      expect.stringMatching(/Starting card sync/)
+    );
+    expect(fakeLogger.logs).toContain(
+      expect.stringMatching(/Fetched \d+ cards/)
+    );
+    expect(fakeLogger.logs).toContain(
+      expect.stringMatching(/Saving cards to database/)
+    );
+    expect(fakeLogger.logs).toContain(
+      expect.stringMatching(/Cards saved successfully/)
+    );
   });
 });

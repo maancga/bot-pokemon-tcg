@@ -5,8 +5,8 @@ import {
   setupTestDb,
   teardownTestDb,
 } from "../../../test-helpers/mongoTestHelpers.ts";
-import { Card } from "../../domain/Card";
-import { MongoCardsRepository } from "./CardsDataRepository";
+import type { Card } from "../../domain/Card.ts";
+import { MongoCardsRepository } from "./CardsDataRepository.ts";
 
 describe("MongoCardsRepository (integration)", () => {
   let client: MongoClient;

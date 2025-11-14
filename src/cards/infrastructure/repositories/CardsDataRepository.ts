@@ -1,9 +1,16 @@
-import type { Collection, Db } from "mongodb";
-import type { Card } from "../../domain/Card";
-import { CardsRepository } from "../../domain/CardsDataRepository";
+import type { interfaces } from "inversify";
+import { Db } from "mongodb";
+import type { Collection } from "mongodb";
+import type { Card } from "../../domain/Card.ts";
+import type { CardsRepository } from "../../domain/CardsDataRepository.ts";
 
 export class MongoCardsRepository implements CardsRepository {
   private readonly collection: Collection<Card>;
+
+  static async create({ container }: interfaces.Context) {
+    const db = await container.getAsync<Db>(Db);
+    return new MongoCardsRepository(db);
+  }
 
   constructor(db: Db) {
     this.collection = db.collection("cards");

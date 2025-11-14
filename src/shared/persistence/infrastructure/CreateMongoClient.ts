@@ -1,10 +1,10 @@
 import { ContainerModule, type interfaces } from "inversify";
 import { Db, MongoClient } from "mongodb";
-import { Token } from "../config/domain/Token.ts";
+import { Token } from "../../../config/domain/Token.ts";
 import {
   config,
   type DatabaseConfig,
-} from "../config/infrastructure/config.ts";
+} from "../../../config/infrastructure/config.ts";
 
 export async function createMongoClient({ container }: interfaces.Context) {
   const { username, password, host, port } = container.get<DatabaseConfig>(

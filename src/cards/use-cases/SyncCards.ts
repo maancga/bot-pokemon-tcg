@@ -1,11 +1,44 @@
-import { Card } from "../domain/Card.ts";
-import { CardsProvider } from "../domain/CardsProvider.ts";
+import type { interfaces } from "inversify";
+import { Token } from "../../config/domain/Token.ts";
+import type { Logger } from "../../shared/loggers/domain/Logger.ts";
+import type { Card } from "../domain/Card.ts";
+import type { CardsRepository } from "../domain/CardsDataRepository.ts";
+import type { CardsProvider } from "../domain/CardsProvider.ts";
 
 export class SyncCards {
-  constructor(private readonly cardProvider: CardsProvider) {}
+  private readonly cardProvider: CardsProvider;
+  private readonly cardRepository: CardsRepository;
+  private readonly logger: Logger;
+
+  static async create({ container }: interfaces.Context) {
+    const provider = await container.getAsync<CardsProvider>(
+      Token.CARDS_PROVIDER
+    );
+    const repository = await container.getAsync<CardsRepository>(
+      Token.CARDS_REPOSITORY
+    );
+    const logger = container.get<Logger>(Token.LOGGER);
+    return new SyncCards(provider, repository, logger);
+  }
+
+  constructor(
+    cardProvider: CardsProvider,
+    cardRepository: CardsRepository,
+    logger: Logger
+  ) {
+    this.cardProvider = cardProvider;
+    this.cardRepository = cardRepository;
+    this.logger = logger;
+  }
 
   async execute(): Promise<Card[]> {
+    this.logger.info("Starting card sync...");
     const fetchedCards = await this.cardProvider.getData();
+    this.logger.info(`Fetched ${fetchedCards.length} cards`);
+
+    this.logger.info("Saving cards to database...");
+    await this.cardRepository.save(fetchedCards);
+    this.logger.info("Cards saved successfully");
 
     return fetchedCards;
   }

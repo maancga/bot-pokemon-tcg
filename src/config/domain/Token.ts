@@ -1,4 +1,9 @@
 export const Token = {
+  // App
+  APP: Symbol.for("APP"),
+  LOGGER: Symbol.for("LOGGER"),
+  SCHEDULER: Symbol.for("SCHEDULER"),
+
   // Database
   DB_CONFIG: Symbol.for("DB_CONFIG"),
   MONGO_CLIENT: Symbol.for("MONGO_CLIENT"),

@@ -1,8 +1,11 @@
 import puppeteer from "puppeteer";
-import { Card } from "../../domain/Card";
-import { CardsProvider } from "../../domain/CardsProvider";
+import type { Card } from "../../domain/Card.ts";
+import type { CardsProvider } from "../../domain/CardsProvider.ts";
 
 export class GAMEStoreCardsProvider implements CardsProvider {
+  static async create() {
+    return new GAMEStoreCardsProvider();
+  }
   private readonly url = "https://www.game.es/buscar/pokemon%20tcg";
 
   async getData(): Promise<Card[]> {
