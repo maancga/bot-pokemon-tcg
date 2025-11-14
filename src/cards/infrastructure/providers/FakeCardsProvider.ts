@@ -29,27 +29,37 @@ export class FakeCardsProvider implements CardsProvider {
   }
 
   private getDefaultCards(): Card[] {
+    const now = new Date("2025-01-15T10:00:00Z");
     return [
       {
         id: "game-charizard-ex-241281",
+        source: "gamestore",
         title: "Caja Colección Especial Pokemon TCG Charizard Ex (Castellano)",
         price: "MERCHANDISING",
         link: "https://www.game.es/COLECCIONABLES/BARAJA-POKÉMON/MERCHANDISING/CAJA-COLECCION-ESPECIAL-POKEMON-TCG-CHARIZARD-EX-CASTELLANO/241281",
         imageUrl: "https://media.game.es/COVERV2/3D_L/241/241281.png",
+        lastScrapedAt: now,
+        createdAt: now,
       },
       {
         id: "game-zacian-v1ib5c",
+        source: "gamestore",
         title: "Caja Coleccion EX Pokemon TCG Zacian de Paul (Castellano)",
         price: "MERCHANDISING",
         link: "https://www.game.es/COLECCIONABLES/BARAJA-POKÉMON/MERCHANDISING/CAJA-COLECCION-EX-POKEMON-TCG-ZACIAN-DE-PAUL-CASTELLANO/V1IB5C",
         imageUrl: "https://media.game.es/COVERV2/3D_L/V1I/V1IB5C.png",
+        lastScrapedAt: now,
+        createdAt: now,
       },
       {
         id: "game-garchomp-241879",
+        source: "gamestore",
         title: "Caja Colección Premium EX Pokemon TCG: Garchomp de Cintia",
         price: "MERCHANDISING",
         link: "https://www.game.es/COLECCIONABLES/BARAJA-POKÉMON/MERCHANDISING/CAJA-COLECCION-PREMIUM-EX-POKEMON-TCG-GARCHOMP-DE-CINTIA/241879",
         imageUrl: "https://media.game.es/COVERV2/3D_L/241/241879.png",
+        lastScrapedAt: now,
+        createdAt: now,
       },
     ];
   }

@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import { Card } from "../domain/Card.ts";
-import { FakeCardsProvider } from "../infrastructure/FakeCardsProvider.ts";
+import { FakeCardsProvider } from "../infrastructure/providers/FakeCardsProvider.ts";
 import { SyncCards } from "./SyncCards.ts";
 
 describe("SyncDataUseCase", () => {
@@ -24,19 +24,27 @@ describe("SyncDataUseCase", () => {
     const cards = await useCase.execute();
 
     const firstCard = cards[0];
+    expect(firstCard).toHaveProperty("id");
+    expect(firstCard).toHaveProperty("source");
     expect(firstCard).toHaveProperty("title");
     expect(firstCard).toHaveProperty("price");
     expect(firstCard).toHaveProperty("link");
     expect(firstCard).toHaveProperty("imageUrl");
+    expect(firstCard).toHaveProperty("lastScrapedAt");
+    expect(firstCard).toHaveProperty("createdAt");
   });
 
   it("should work with custom card data", async () => {
     const customCards: Card[] = [
       {
+        id: "custom-001",
+        source: "test-store",
         title: "Custom Pokemon Card",
         price: "MERCHANDISING",
         link: "https://example.com/custom",
         imageUrl: "https://example.com/image.png",
+        lastScrapedAt: new Date("2025-01-15T10:00:00Z"),
+        createdAt: new Date("2025-01-15T10:00:00Z"),
       },
     ];
     fakeProvider.setCards(customCards);

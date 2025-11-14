@@ -26,7 +26,13 @@ export class GAMEStoreCardsProvider implements CardsProvider {
       await new Promise((resolve) => setTimeout(resolve, 5000));
 
       const cards = await page.evaluate(() => {
-        const results: Card[] = [];
+        const results: Array<{
+          id: string;
+          title: string;
+          price: string;
+          link: string;
+          imageUrl: string;
+        }> = [];
 
         const selectors = [
           "article",
@@ -90,7 +96,17 @@ export class GAMEStoreCardsProvider implements CardsProvider {
         return results;
       });
 
-      return cards.filter((card) => card.price === "MERCHANDISING");
+      const now = new Date();
+      const fullCards: Card[] = cards
+        .filter((card) => card.price === "MERCHANDISING")
+        .map((card) => ({
+          ...card,
+          source: "gamestore",
+          lastScrapedAt: now,
+          createdAt: now,
+        }));
+
+      return fullCards;
     } finally {
       await browser.close();
     }
