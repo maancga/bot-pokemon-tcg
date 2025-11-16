@@ -61,8 +61,14 @@ function loadConfig(): Config {
       database: process.env.DB_DATABASE || "pokemon_tcg",
     },
     scheduler: {
-      cronSchedule: process.env.CRON_SCHEDULE || "0 */6 * * *",
-      syncOnStartup: process.env.SYNC_ON_STARTUP === "true",
+      cronSchedule: process.env.CRON_SCHEDULE || "*/1 * * * *",
+      syncOnStartup: process.env.SYNC_ON_STARTUP || true,
+    },
+    sendMessagePlatforms: {
+      discord: {
+        testwebhook:
+          "https://discord.com/api/webhooks/1439408027567394880/OlKxRwrVaUJzo2KpffdEkoFtT2zc8M0Y_Giz2Peenk8PS0CkJlnUOIiL1qbE4cEri-gl",
+      },
     },
   };
 
