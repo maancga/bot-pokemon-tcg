@@ -78,7 +78,9 @@ function loadConfig(): Config {
     },
     scheduler: {
       cronSchedule: process.env.CRON_SCHEDULE || "*/1 * * * *",
-      syncOnStartup: process.env.SYNC_ON_STARTUP || true,
+      syncOnStartup: process.env.SYNC_ON_STARTUP
+        ? process.env.SYNC_ON_STARTUP === 'true'
+        : true,
     },
     notifications: {
       discordWebhookUrl:
