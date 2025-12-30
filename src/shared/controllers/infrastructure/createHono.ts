@@ -1,4 +1,5 @@
 import { Hono } from "hono";
+import { cors } from "hono/cors";
 import type { ResolutionContext } from "inversify";
 import { Token } from "../../config/domain/Token.ts";
 import type { Logger } from "../../loggers/domain/Logger.ts";
@@ -7,6 +8,19 @@ import { createErrorMiddleware } from "./errorMiddleware.ts";
 export function createHono(context: ResolutionContext) {
   const app = new Hono();
   const logger = context.get<Logger>(Token.LOGGER);
+
+  // CORS middleware for frontend
+  app.use(
+    "*",
+    cors({
+      origin: [
+        "https://tcg-radar-frontend.vercel.app",
+        "http://localhost:4321",
+        "http://localhost:3000",
+      ],
+      credentials: true,
+    })
+  );
 
   // Global error handling middleware
   app.use("*", createErrorMiddleware(logger));
