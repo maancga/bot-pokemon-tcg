@@ -1,0 +1,313 @@
+---
+/**
+ * Navigation Component
+ * Top navigation bar with logo and links
+ */
+
+import AnimatedButton from '@components/ui/Button/AnimatedButton.tsx';
+---
+
+<nav class="nav">
+  <div class="nav__container container">
+    <!-- Logo -->
+    <a href="/" class="nav__logo">
+      <img src="/images/logo.png" alt="TCG Radar" class="nav__logo-image" />
+    </a>
+
+    <!-- Desktop Navigation Links -->
+    <ul class="nav__links">
+      <li><a href="#features" class="nav__link">Características</a></li>
+      <li><a href="#how-it-works" class="nav__link">Cómo Funciona</a></li>
+      <li><a href="#pricing" class="nav__link">Precios</a></li>
+      <li><a href="#faq" class="nav__link">FAQ</a></li>
+    </ul>
+
+    <!-- CTA Button -->
+    <div class="nav__cta">
+      <AnimatedButton client:load variant="primary" size="sm">
+        Comenzar
+      </AnimatedButton>
+    </div>
+
+    <!-- Mobile Menu Toggle -->
+    <button class="nav__toggle" aria-label="Toggle menu" id="nav-toggle">
+      <span class="nav__toggle-line"></span>
+      <span class="nav__toggle-line"></span>
+      <span class="nav__toggle-line"></span>
+    </button>
+  </div>
+
+  <!-- Mobile Menu -->
+  <div class="nav__mobile" id="nav-mobile">
+    <ul class="nav__mobile-links">
+      <li><a href="#features" class="nav__mobile-link">Características</a></li>
+      <li><a href="#how-it-works" class="nav__mobile-link">Cómo Funciona</a></li>
+      <li><a href="#pricing" class="nav__mobile-link">Precios</a></li>
+      <li><a href="#faq" class="nav__mobile-link">FAQ</a></li>
+    </ul>
+    <div class="nav__mobile-cta">
+      <AnimatedButton client:load variant="primary" size="md">
+        Comenzar
+      </AnimatedButton>
+    </div>
+  </div>
+
+  <!-- Holographic bottom border -->
+  <div class="nav__gradient" aria-hidden="true"></div>
+</nav>
+
+<script>
+  // Mobile menu toggle
+  const toggle = document.getElementById('nav-toggle');
+  const mobileMenu = document.getElementById('nav-mobile');
+
+  toggle?.addEventListener('click', () => {
+    toggle.classList.toggle('active');
+    mobileMenu?.classList.toggle('active');
+  });
+
+  // Close mobile menu when clicking on a link
+  const mobileLinks = document.querySelectorAll('.nav__mobile-link');
+  mobileLinks.forEach(link => {
+    link.addEventListener('click', () => {
+      toggle?.classList.remove('active');
+      mobileMenu?.classList.remove('active');
+    });
+  });
+
+  // Sticky nav on scroll
+  let lastScroll = 0;
+  const nav = document.querySelector('.nav');
+
+  window.addEventListener('scroll', () => {
+    const currentScroll = window.pageYOffset;
+
+    if (currentScroll > 100) {
+      nav?.classList.add('scrolled');
+    } else {
+      nav?.classList.remove('scrolled');
+    }
+
+    lastScroll = currentScroll;
+  });
+</script>
+
+<style>
+  .nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: var(--z-sticky);
+    background: var(--color-bg-base);
+    border-bottom: 1px solid transparent;
+    transition: all var(--transition-normal);
+  }
+
+  .nav.scrolled {
+    background: rgba(var(--color-bg-base-rgb, 15, 16, 21), 0.95);
+    backdrop-filter: blur(10px);
+    border-bottom-color: var(--color-border-subtle);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .nav__container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: var(--space-4);
+    padding-bottom: var(--space-4);
+  }
+
+  /* Logo */
+  .nav__logo {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    transition: opacity var(--transition-fast);
+  }
+
+  .nav__logo:hover {
+    opacity: 0.8;
+  }
+
+  .nav__logo-image {
+    width: 200px;
+    height: auto;
+    max-height: 80px;
+    object-fit: contain;
+  }
+
+  /* Desktop Navigation Links */
+  .nav__links {
+    display: flex;
+    align-items: center;
+    gap: var(--space-8);
+    list-style: none;
+  }
+
+  .nav__link {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+    position: relative;
+  }
+
+  .nav__link::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--gradient-holographic);
+    transform: scaleX(0);
+    transition: transform var(--transition-fast);
+  }
+
+  .nav__link:hover {
+    color: var(--color-text-primary);
+  }
+
+  .nav__link:hover::after {
+    transform: scaleX(1);
+  }
+
+  /* CTA Button */
+  .nav__cta {
+    display: flex;
+  }
+
+  /* Mobile Toggle */
+  .nav__toggle {
+    display: none;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 28px;
+    height: 21px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+  }
+
+  .nav__toggle-line {
+    width: 100%;
+    height: 3px;
+    background: var(--color-text-primary);
+    border-radius: 2px;
+    transition: all var(--transition-fast);
+  }
+
+  .nav__toggle.active .nav__toggle-line:nth-child(1) {
+    transform: translateY(9px) rotate(45deg);
+  }
+
+  .nav__toggle.active .nav__toggle-line:nth-child(2) {
+    opacity: 0;
+  }
+
+  .nav__toggle.active .nav__toggle-line:nth-child(3) {
+    transform: translateY(-9px) rotate(-45deg);
+  }
+
+  /* Mobile Menu */
+  .nav__mobile {
+    display: none;
+    position: fixed;
+    top: 73px;
+    left: 0;
+    right: 0;
+    background: var(--color-bg-elevated);
+    border-bottom: 1px solid var(--color-border-subtle);
+    padding: var(--space-6) 0;
+    transform: translateY(-100%);
+    opacity: 0;
+    transition: all var(--transition-normal);
+  }
+
+  .nav__mobile.active {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  .nav__mobile-links {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    list-style: none;
+    padding: 0 var(--space-6);
+    margin-bottom: var(--space-6);
+  }
+
+  .nav__mobile-link {
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    padding: var(--space-3);
+    border-radius: var(--radius-md);
+    transition: all var(--transition-fast);
+  }
+
+  .nav__mobile-link:hover {
+    color: var(--color-text-primary);
+    background: var(--color-bg-hover);
+  }
+
+  .nav__mobile-cta {
+    padding: 0 var(--space-6);
+  }
+
+  .nav__mobile-cta :global(button) {
+    width: 100%;
+  }
+
+  /* Holographic gradient */
+  .nav__gradient {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: var(--gradient-holographic);
+    opacity: 0;
+    transition: opacity var(--transition-normal);
+  }
+
+  .nav.scrolled .nav__gradient {
+    opacity: 0.6;
+  }
+
+  /* Responsive */
+  @media (max-width: 1024px) {
+    .nav__links {
+      gap: var(--space-6);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .nav__links {
+      display: none;
+    }
+
+    .nav__cta {
+      display: none;
+    }
+
+    .nav__toggle {
+      display: flex;
+    }
+
+    .nav__mobile {
+      display: block;
+    }
+  }
+
+  /* Add padding to body to prevent content from hiding under fixed nav */
+  :global(body) {
+    padding-top: 73px;
+  }
+</style>

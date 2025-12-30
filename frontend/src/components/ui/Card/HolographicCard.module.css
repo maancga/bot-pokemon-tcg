@@ -1,0 +1,72 @@
+/**
+ * HolographicCard Styles
+ * 3D tilt effect with holographic overlay
+ */
+
+.card {
+  position: relative;
+  border-radius: var(--radius-card);
+  background: var(--color-bg-card);
+  transform-style: preserve-3d;
+  will-change: transform;
+  cursor: pointer;
+}
+
+.cardContent {
+  position: relative;
+  z-index: 2;
+  transform: translateZ(20px);
+}
+
+/* Holographic overlay (rainbow shimmer) */
+.holographicOverlay {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--gradient-holographic);
+  background-size: 200% 200%;
+  opacity: 0;
+  mix-blend-mode: color-dodge;
+  pointer-events: none;
+  transition: opacity var(--transition-normal);
+  z-index: 1;
+}
+
+.holographicOverlayVisible {
+  opacity: 0.6;
+  animation: holographic-shimmer 2s ease-in-out infinite;
+}
+
+/* Glow effect */
+.glowEffect {
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  background: var(--gradient-holographic);
+  opacity: 0;
+  filter: blur(20px);
+  pointer-events: none;
+  transition: opacity var(--transition-normal);
+  z-index: 0;
+}
+
+.glowEffectVisible {
+  opacity: 0.4;
+}
+
+/* Custom glow color variant */
+.card[style*="--glow-color"] .glowEffect {
+  background: var(--glow-color);
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .card {
+    transform: none !important;
+    will-change: auto;
+  }
+
+  .holographicOverlay {
+    animation: none;
+  }
+}

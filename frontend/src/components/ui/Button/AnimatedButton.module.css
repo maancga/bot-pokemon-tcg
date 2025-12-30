@@ -1,0 +1,173 @@
+/**
+ * AnimatedButton Styles
+ */
+
+.button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-body);
+  font-weight: var(--font-weight-semibold);
+  border: none;
+  border-radius: var(--radius-button);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.buttonContent {
+  position: relative;
+  z-index: 2;
+}
+
+/* Glow effect */
+.buttonGlow {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  border-radius: inherit;
+  transition: opacity var(--transition-normal);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.button:hover:not(:disabled) .buttonGlow {
+  opacity: 1;
+}
+
+/* Size variants */
+.button--sm {
+  padding: var(--space-2) var(--space-4);
+  font-size: var(--font-size-sm);
+}
+
+.button--md {
+  padding: var(--space-3) var(--space-6);
+  font-size: var(--font-size-base);
+}
+
+.button--lg {
+  padding: var(--space-4) var(--space-8);
+  font-size: var(--font-size-lg);
+}
+
+/* Variant: Primary */
+.button--primary {
+  background: var(--color-electric);
+  color: var(--color-bg-base);
+}
+
+.button--primary .buttonGlow {
+  box-shadow: 0 0 20px var(--color-electric),
+              0 0 40px var(--color-electric);
+}
+
+.button--primary:hover:not(:disabled) {
+  background: var(--color-electric-light);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+.button--primary:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+/* Variant: Secondary */
+.button--secondary {
+  background: var(--color-bg-elevated);
+  color: var(--color-text-primary);
+  border: 2px solid var(--color-border-medium);
+}
+
+.button--secondary .buttonGlow {
+  box-shadow: 0 0 20px var(--color-water),
+              0 0 40px var(--color-water);
+}
+
+.button--secondary:hover:not(:disabled) {
+  border-color: var(--color-water);
+  transform: translateY(-2px);
+}
+
+/* Variant: Ghost */
+.button--ghost {
+  background: transparent;
+  color: var(--color-text-secondary);
+  border: 2px solid transparent;
+}
+
+.button--ghost:hover:not(:disabled) {
+  color: var(--color-text-primary);
+  border-color: var(--color-border-subtle);
+  background: var(--color-bg-hover);
+}
+
+/* Variant: Holographic */
+.button--holographic {
+  background: var(--gradient-holographic);
+  background-size: 200% 200%;
+  color: var(--color-bg-base);
+  font-weight: var(--font-weight-bold);
+  animation: holographic-shimmer 3s ease-in-out infinite;
+}
+
+.button--holographic .buttonGlow {
+  box-shadow: var(--shadow-holographic);
+}
+
+.button--holographic:hover:not(:disabled) {
+  transform: translateY(-2px) scale(1.05);
+}
+
+/* Loading state */
+.buttonLoading {
+  pointer-events: none;
+}
+
+.buttonLoading::after {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  margin-left: var(--space-2);
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Reduced motion */
+.buttonReduced,
+.buttonReduced:hover {
+  transform: none !important;
+  animation: none !important;
+}
+
+.buttonReduced .buttonGlow {
+  opacity: 0 !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .button,
+  .button:hover {
+    transform: none;
+    animation: none;
+  }
+
+  .buttonGlow {
+    display: none;
+  }
+}

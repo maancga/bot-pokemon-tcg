@@ -1,0 +1,685 @@
+---
+/**
+ * HeroSection
+ * Above-the-fold hero with value proposition and CTA
+ * Enhanced with realistic card product notification showcase
+ */
+
+import GradientText from '@components/ui/Typography/GradientText.astro';
+import AnimatedButton from '@components/ui/Button/AnimatedButton.tsx';
+import Badge from '@components/ui/Badge/Badge.astro';
+import HolographicCard from '@components/ui/Card/HolographicCard.tsx';
+import { getStats } from '@lib/api/client';
+
+// Fetch stats from backend (server-side at build time)
+// Fallback to default values if fetch fails
+let stats = {
+  stores: { total: 1, active: [] },
+  integrations: []
+};
+
+try {
+  stats = await getStats();
+} catch (error) {
+  console.warn('Failed to fetch stats from backend, using defaults:', error);
+}
+
+// Find active integrations
+const activeIntegrations = stats.integrations.filter(i => i.status === 'active');
+const discordActive = activeIntegrations.some(i => i.id === 'discord');
+
+// Build integration list for description
+const integrationNames = stats.integrations.map(i => {
+  const names: Record<string, string> = {
+    discord: 'Discord',
+    email: 'Email',
+    telegram: 'Telegram'
+  };
+  return names[i.id] || i.name;
+});
+
+const integrationsText = integrationNames.length > 0
+  ? integrationNames.slice(0, -1).join(', ') + (integrationNames.length > 1 ? ' o ' : '') + integrationNames.slice(-1)
+  : 'tus canales favoritos';
+---
+
+<section class="hero">
+  <!-- Floating particles background -->
+  <div class="particles" aria-hidden="true">
+    {Array.from({ length: 20 }).map((_, i) => (
+      <div class="particle" style={`--delay: ${i * 0.2}s; --duration: ${3 + Math.random() * 4}s;`} />
+    ))}
+  </div>
+
+  <div class="hero__container container">
+    <!-- Left: Text content -->
+    <div class="hero__content">
+      <h1 class="hero__title">
+        No te Pierdas<br />
+        <GradientText as="span">Ninguna Carta Rara</GradientText>
+      </h1>
+
+      <p class="hero__description">
+        Monitoreo automático de ventas de Pokémon TCG en tiendas.
+        Recibe notificaciones instantáneas vía {integrationsText} cuando lleguen nuevas cartas al mercado.
+      </p>
+
+      <div class="hero__cta">
+        <AnimatedButton client:load variant="primary" size="lg">
+          Recibir Notificaciones
+        </AnimatedButton>
+        <AnimatedButton client:load variant="ghost" size="lg">
+          Más Información
+        </AnimatedButton>
+      </div>
+
+      <!-- Stat badges -->
+      <div class="hero__stats">
+        <Badge variant="info" size="sm">
+          {stats.stores.total} {stats.stores.total === 1 ? 'Tienda Monitoreada' : 'Tiendas Monitoreadas'}
+        </Badge>
+        {discordActive && (
+          <Badge variant="success" size="sm">Alertas Discord Activas</Badge>
+        )}
+        <Badge variant="warning" size="sm">Monitoreo 24/7</Badge>
+      </div>
+    </div>
+
+    <!-- Right: Product notification showcase -->
+    <div class="hero__visual">
+      <div class="notification-showcase">
+        <!-- Main notification card -->
+        <HolographicCard client:visible className="notification-card">
+          <div class="notification-card__inner">
+            <!-- Card header -->
+            <div class="notification-card__header">
+              <div class="notification-card__badge-group">
+                <Badge variant="holographic" size="sm">Nueva Alerta</Badge>
+                <span class="notification-card__time">Ahora mismo</span>
+              </div>
+              <svg class="notification-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M13.73 21a2 2 0 0 1-3.46 0" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+
+            <!-- Product image with holographic border -->
+            <div class="product-image-container">
+              <div class="product-image">
+                <img
+                  src="/images/Charizard_EX.png"
+                  alt="Charizard ex"
+                  class="product-image__card"
+                />
+                <!-- Holographic shine overlay -->
+                <div class="product-image__shine"></div>
+              </div>
+            </div>
+
+            <!-- Product details -->
+            <div class="product-details">
+              <h3 class="product-details__title">
+                <GradientText as="span">Charizard ex</GradientText>
+              </h3>
+              <p class="product-details__subtitle">
+                Llamas Obsidianas - Ultra Rara
+              </p>
+
+              <div class="product-details__price-row">
+                <div class="product-details__price">€89,99</div>
+                <div class="product-details__availability">
+                  <span class="availability-dot"></span>
+                  En Stock
+                </div>
+              </div>
+
+              <div class="product-details__store">
+                <svg class="store-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="currentColor" stroke-width="2"/>
+                  <polyline points="9 22 9 12 15 12 15 22" stroke="currentColor" stroke-width="2"/>
+                </svg>
+                Tienda GAME
+              </div>
+            </div>
+
+            <!-- CTA Button -->
+            <button class="notification-cta">
+              <span>Ver Producto</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+          </div>
+        </HolographicCard>
+
+        <!-- Floating accent cards (background depth) -->
+        <div class="accent-cards" aria-hidden="true">
+          <div class="accent-card accent-card--1"></div>
+          <div class="accent-card accent-card--2"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    padding: var(--space-16) 0;
+  }
+
+  /* Floating particles */
+  .particles {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .particle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: var(--gradient-holographic);
+    border-radius: 50%;
+    opacity: 0;
+    animation: float-particle var(--duration, 5s) ease-in-out infinite;
+    animation-delay: var(--delay, 0s);
+    filter: blur(1px);
+    box-shadow: 0 0 10px currentColor;
+  }
+
+  .particle:nth-child(odd) {
+    left: calc(10% + (var(--delay, 0s) * 10));
+    animation-name: float-particle-left;
+  }
+
+  .particle:nth-child(even) {
+    right: calc(10% + (var(--delay, 0s) * 10));
+    animation-name: float-particle-right;
+  }
+
+  @keyframes float-particle {
+    0%, 100% {
+      opacity: 0;
+      transform: translateY(100vh) scale(0);
+    }
+    10%, 90% {
+      opacity: 0.6;
+    }
+    50% {
+      opacity: 1;
+      transform: translateY(50vh) scale(1);
+    }
+  }
+
+  @keyframes float-particle-left {
+    0%, 100% {
+      opacity: 0;
+      transform: translate(0, 100vh) scale(0);
+    }
+    10%, 90% {
+      opacity: 0.6;
+    }
+    50% {
+      opacity: 1;
+      transform: translate(-30px, 50vh) scale(1);
+    }
+  }
+
+  @keyframes float-particle-right {
+    0%, 100% {
+      opacity: 0;
+      transform: translate(0, 100vh) scale(0);
+    }
+    10%, 90% {
+      opacity: 0.6;
+    }
+    50% {
+      opacity: 1;
+      transform: translate(30px, 50vh) scale(1);
+    }
+  }
+
+  /* Radial gradient background */
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -10%;
+    right: -5%;
+    width: 60%;
+    height: 60%;
+    background: radial-gradient(
+      ellipse,
+      hsla(55, 95%, 65%, 0.15) 0%,
+      transparent 70%
+    );
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .hero__container {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-16);
+    align-items: center;
+  }
+
+  .hero__content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+
+  .hero__title {
+    font-size: clamp(2.5rem, 5vw, 4.5rem);
+    line-height: var(--line-height-tight);
+    letter-spacing: var(--letter-spacing-tight);
+    margin-bottom: var(--space-2);
+  }
+
+  .hero__description {
+    font-size: var(--font-size-lg);
+    line-height: var(--line-height-relaxed);
+    color: var(--color-text-secondary);
+    max-width: 540px;
+  }
+
+  .hero__cta {
+    display: flex;
+    gap: var(--space-4);
+    flex-wrap: wrap;
+    margin-top: var(--space-4);
+  }
+
+  .hero__stats {
+    display: flex;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+    margin-top: var(--space-4);
+  }
+
+  .hero__visual {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+  }
+
+  /* Notification showcase */
+  .notification-showcase {
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+    animation: card-flip-reveal 1s cubic-bezier(0.4, 0, 0.2, 1) 0.3s both;
+  }
+
+  @keyframes card-flip-reveal {
+    0% {
+      opacity: 0;
+      transform: perspective(1000px) rotateY(90deg) scale(0.8);
+    }
+    100% {
+      opacity: 1;
+      transform: perspective(1000px) rotateY(0deg) scale(1);
+    }
+  }
+
+  /* Main notification card */
+  :global(.notification-card) {
+    width: 100%;
+    background: linear-gradient(135deg,
+      var(--color-bg-card) 0%,
+      hsl(230, 15%, 18%) 100%
+    );
+    border: 1px solid var(--color-border-medium);
+    box-shadow:
+      0 20px 60px rgba(0, 0, 0, 0.5),
+      0 0 80px rgba(237, 231, 79, 0.15),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+
+  .notification-card__inner {
+    padding: var(--space-6);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+  }
+
+  /* Card header */
+  .notification-card__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .notification-card__badge-group {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  .notification-card__time {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-tertiary);
+  }
+
+  .notification-icon {
+    color: var(--color-electric);
+    filter: drop-shadow(0 0 8px var(--color-electric));
+    animation: bell-ring 2s ease-in-out infinite;
+  }
+
+  @keyframes bell-ring {
+    0%, 100% {
+      transform: rotate(0deg);
+    }
+    10%, 30% {
+      transform: rotate(15deg);
+    }
+    20%, 40% {
+      transform: rotate(-15deg);
+    }
+  }
+
+  /* Product image */
+  .product-image-container {
+    position: relative;
+    aspect-ratio: 2.5 / 3.5;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background: linear-gradient(135deg,
+      hsl(230, 15%, 22%) 0%,
+      hsl(230, 15%, 16%) 100%
+    );
+    border: 2px solid transparent;
+    background-clip: padding-box;
+  }
+
+  .product-image-container::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    background: var(--gradient-holographic);
+    border-radius: inherit;
+    z-index: -1;
+    opacity: 0.6;
+  }
+
+  .product-image {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .product-image__card {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: var(--radius-md);
+  }
+
+  .product-image__shine {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      115deg,
+      transparent 30%,
+      rgba(255, 255, 255, 0.15) 50%,
+      transparent 70%
+    );
+    background-size: 200% 200%;
+    animation: shine-sweep 3s ease-in-out infinite;
+    pointer-events: none;
+  }
+
+  @keyframes shine-sweep {
+    0%, 100% {
+      background-position: 200% 0;
+    }
+    50% {
+      background-position: -100% 0;
+    }
+  }
+
+  /* Product details */
+  .product-details {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .product-details__title {
+    font-size: var(--font-size-xl);
+    font-family: var(--font-heading);
+    font-weight: var(--font-weight-bold);
+  }
+
+  .product-details__subtitle {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-tertiary);
+  }
+
+  .product-details__price-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: var(--space-2);
+  }
+
+  .product-details__price {
+    font-size: var(--font-size-3xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-electric);
+    text-shadow: 0 0 20px var(--color-electric);
+  }
+
+  .product-details__availability {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--font-size-sm);
+    color: var(--color-grass);
+  }
+
+  .availability-dot {
+    width: 8px;
+    height: 8px;
+    background: var(--color-grass);
+    border-radius: 50%;
+    animation: pulse-dot 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse-dot {
+    0%, 100% {
+      opacity: 1;
+      box-shadow: 0 0 0 0 var(--color-grass);
+    }
+    50% {
+      opacity: 0.7;
+      box-shadow: 0 0 0 4px transparent;
+    }
+  }
+
+  .product-details__store {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-3);
+    background: var(--color-bg-elevated);
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    width: fit-content;
+  }
+
+  .store-icon {
+    color: var(--color-text-tertiary);
+  }
+
+  /* CTA Button */
+  .notification-cta {
+    width: 100%;
+    padding: var(--space-4);
+    background: var(--color-electric);
+    color: var(--color-bg-base);
+    border: none;
+    border-radius: var(--radius-button);
+    font-family: var(--font-body);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-semibold);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    transition: all var(--transition-normal);
+    box-shadow: 0 4px 12px rgba(237, 231, 79, 0.3);
+  }
+
+  .notification-cta:hover {
+    background: var(--color-electric-light);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(237, 231, 79, 0.4);
+  }
+
+  .notification-cta:active {
+    transform: translateY(0);
+  }
+
+  .notification-cta svg {
+    transition: transform var(--transition-fast);
+  }
+
+  .notification-cta:hover svg {
+    transform: translateX(4px);
+  }
+
+  /* Accent cards (floating background elements) */
+  .accent-cards {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+  }
+
+  .accent-card {
+    position: absolute;
+    width: 60%;
+    height: 60%;
+    background: linear-gradient(135deg,
+      var(--color-psychic) 0%,
+      var(--color-water) 100%
+    );
+    border-radius: var(--radius-card);
+    opacity: 0.1;
+    filter: blur(40px);
+    animation: float-accent 6s ease-in-out infinite;
+  }
+
+  .accent-card--1 {
+    top: -10%;
+    right: -10%;
+    animation-delay: 0s;
+  }
+
+  .accent-card--2 {
+    bottom: -10%;
+    left: -10%;
+    animation-delay: 3s;
+    background: linear-gradient(135deg,
+      var(--color-electric) 0%,
+      var(--color-fire) 100%
+    );
+  }
+
+  @keyframes float-accent {
+    0%, 100% {
+      transform: translate(0, 0) rotate(0deg);
+    }
+    50% {
+      transform: translate(-20px, -20px) rotate(10deg);
+    }
+  }
+
+  /* Responsive */
+  @media (max-width: 1024px) {
+    .hero__container {
+      grid-template-columns: 1fr;
+      gap: var(--space-12);
+      text-align: center;
+    }
+
+    .hero__content {
+      align-items: center;
+    }
+
+    .hero__description {
+      max-width: 600px;
+    }
+
+    .hero__cta {
+      justify-content: center;
+    }
+
+    .hero__stats {
+      justify-content: center;
+    }
+
+    .hero__visual {
+      order: -1;
+    }
+
+    .notification-showcase {
+      max-width: 350px;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .hero {
+      min-height: auto;
+      padding: var(--space-12) 0;
+    }
+
+    .hero__title {
+      font-size: 2.5rem;
+    }
+
+    .hero__cta {
+      flex-direction: column;
+      width: 100%;
+    }
+
+    .hero__cta :global(button) {
+      width: 100%;
+    }
+
+    .notification-showcase {
+      max-width: 320px;
+    }
+  }
+
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    .notification-showcase {
+      animation: none;
+    }
+
+    .particle,
+    .notification-icon,
+    .product-image__shine,
+    .accent-card,
+    .availability-dot {
+      animation: none !important;
+    }
+  }
+</style>

@@ -1,0 +1,74 @@
+---
+/**
+ * BaseLayout
+ * Main layout template for all pages
+ * Includes global styles, meta tags, and page structure
+ */
+
+import Navigation from '@components/Navigation.astro';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = 'TCG Radar - No te Pierdas Ninguna Carta Rara',
+  description = 'Monitoreo automático de ventas de Pokémon TCG en tiendas. Recibe notificaciones instantáneas cuando lleguen nuevas cartas al mercado vía Discord, Email o Telegram.',
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <meta name="generator" content={Astro.generator} />
+
+    <!-- Open Graph / Social Media -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:title" content={title} />
+    <meta property="twitter:description" content={description} />
+
+    <title>{title}</title>
+
+    <!-- Preload Critical Fonts -->
+    <!-- Note: Add custom fonts to public/fonts/ -->
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- Global Styles -->
+    <style is:global>
+      @import '../styles/global.css';
+      @import '../styles/animations.css';
+      @import '../styles/utilities.css';
+    </style>
+  </head>
+  <body>
+    <!-- Skip to main content (accessibility) -->
+    <a href="#main-content" class="skip-to-main">
+      Skip to main content
+    </a>
+
+    <!-- Navigation -->
+    <Navigation />
+
+    <!-- Main Content -->
+    <main id="main-content">
+      <slot />
+    </main>
+
+    <!-- Scripts -->
+    <script>
+      // Add any global client-side scripts here
+      // For example: analytics, theme detection, etc.
+    </script>
+  </body>
+</html>

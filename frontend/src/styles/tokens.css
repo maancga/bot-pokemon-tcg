@@ -1,0 +1,310 @@
+/**
+ * Design Tokens
+ * Pokemon TCG Premium Collector Theme
+ *
+ * Energy-type color palette inspired by Pokemon TCG cards
+ * Holographic gradients and dark premium aesthetic
+ */
+
+:root {
+  /* ============================================
+     ENERGY-TYPE COLORS
+     Based on Pokemon TCG energy types
+     ============================================ */
+
+  /* Fire Energy */
+  --color-fire: hsl(10, 90%, 55%);
+  --color-fire-light: hsl(10, 90%, 65%);
+  --color-fire-dark: hsl(10, 90%, 45%);
+
+  /* Water Energy */
+  --color-water: hsl(210, 85%, 60%);
+  --color-water-light: hsl(210, 85%, 70%);
+  --color-water-dark: hsl(210, 85%, 50%);
+
+  /* Electric Energy */
+  --color-electric: hsl(55, 95%, 65%);
+  --color-electric-light: hsl(55, 95%, 75%);
+  --color-electric-dark: hsl(55, 95%, 55%);
+
+  /* Grass Energy */
+  --color-grass: hsl(120, 60%, 50%);
+  --color-grass-light: hsl(120, 60%, 60%);
+  --color-grass-dark: hsl(120, 60%, 40%);
+
+  /* Psychic Energy */
+  --color-psychic: hsl(280, 70%, 65%);
+  --color-psychic-light: hsl(280, 70%, 75%);
+  --color-psychic-dark: hsl(280, 70%, 55%);
+
+  /* Fighting Energy */
+  --color-fighting: hsl(20, 80%, 55%);
+  --color-fighting-light: hsl(20, 80%, 65%);
+  --color-fighting-dark: hsl(20, 80%, 45%);
+
+  /* Darkness Energy */
+  --color-darkness: hsl(0, 0%, 20%);
+  --color-darkness-light: hsl(0, 0%, 30%);
+  --color-darkness-dark: hsl(0, 0%, 10%);
+
+  /* Metal Energy */
+  --color-metal: hsl(0, 0%, 60%);
+  --color-metal-light: hsl(0, 0%, 70%);
+  --color-metal-dark: hsl(0, 0%, 50%);
+
+  /* Fairy Energy */
+  --color-fairy: hsl(320, 80%, 70%);
+  --color-fairy-light: hsl(320, 80%, 80%);
+  --color-fairy-dark: hsl(320, 80%, 60%);
+
+  /* ============================================
+     HOLOGRAPHIC GRADIENTS
+     Signature prismatic effects
+     ============================================ */
+
+  --gradient-holographic: linear-gradient(
+    135deg,
+    var(--color-psychic) 0%,
+    var(--color-water) 25%,
+    var(--color-grass-light) 50%,
+    var(--color-electric) 75%,
+    var(--color-fire) 100%
+  );
+
+  --gradient-holographic-vertical: linear-gradient(
+    180deg,
+    var(--color-psychic) 0%,
+    var(--color-water) 25%,
+    var(--color-grass-light) 50%,
+    var(--color-electric) 75%,
+    var(--color-fire) 100%
+  );
+
+  --gradient-rare: linear-gradient(
+    135deg,
+    var(--color-electric) 0%,
+    var(--color-fire) 50%,
+    var(--color-psychic) 100%
+  );
+
+  /* ============================================
+     DARK THEME BASE
+     Premium collector aesthetic
+     ============================================ */
+
+  /* Background layers */
+  --color-bg-base: hsl(230, 15%, 8%);
+  --color-bg-base-rgb: 15, 16, 21; /* RGB values for rgba() usage */
+  --color-bg-elevated: hsl(230, 15%, 12%);
+  --color-bg-card: hsl(230, 15%, 16%);
+  --color-bg-hover: hsl(230, 15%, 20%);
+
+  /* Text hierarchy */
+  --color-text-primary: hsl(0, 0%, 98%);
+  --color-text-secondary: hsl(0, 0%, 75%);
+  --color-text-tertiary: hsl(0, 0%, 55%);
+  --color-text-disabled: hsl(0, 0%, 35%);
+
+  /* Borders */
+  --color-border-subtle: hsl(230, 10%, 20%);
+  --color-border-medium: hsl(230, 10%, 30%);
+  --color-border-strong: hsl(230, 10%, 40%);
+  --color-border-holographic: var(--gradient-holographic);
+
+  /* Semantic colors */
+  --color-success: var(--color-grass);
+  --color-warning: var(--color-electric);
+  --color-error: var(--color-fire);
+  --color-info: var(--color-water);
+
+  /* ============================================
+     TYPOGRAPHY
+     Font families and scales
+     ============================================ */
+
+  /* Font families */
+  --font-heading: 'Pokemon Solid', 'Impact', 'Arial Black', sans-serif;
+  --font-body: 'Inter Display Variable', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+
+  /* Font sizes */
+  --font-size-xs: 0.75rem;     /* 12px */
+  --font-size-sm: 0.875rem;    /* 14px */
+  --font-size-base: 1rem;      /* 16px */
+  --font-size-lg: 1.125rem;    /* 18px */
+  --font-size-xl: 1.25rem;     /* 20px */
+  --font-size-2xl: 1.5rem;     /* 24px */
+  --font-size-3xl: 1.875rem;   /* 30px */
+  --font-size-4xl: 2.25rem;    /* 36px */
+  --font-size-5xl: 3rem;       /* 48px */
+  --font-size-6xl: 3.75rem;    /* 60px */
+  --font-size-7xl: 4.5rem;     /* 72px */
+
+  /* Font weights */
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-black: 900;
+
+  /* Line heights */
+  --line-height-tight: 1.1;
+  --line-height-snug: 1.25;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.75;
+
+  /* Letter spacing */
+  --letter-spacing-tight: -0.02em;
+  --letter-spacing-normal: 0;
+  --letter-spacing-wide: 0.025em;
+  --letter-spacing-wider: 0.05em;
+
+  /* ============================================
+     SPACING SCALE
+     8px base unit
+     ============================================ */
+
+  --space-0: 0;
+  --space-1: 0.25rem;   /* 4px */
+  --space-2: 0.5rem;    /* 8px */
+  --space-3: 0.75rem;   /* 12px */
+  --space-4: 1rem;      /* 16px */
+  --space-5: 1.25rem;   /* 20px */
+  --space-6: 1.5rem;    /* 24px */
+  --space-8: 2rem;      /* 32px */
+  --space-10: 2.5rem;   /* 40px */
+  --space-12: 3rem;     /* 48px */
+  --space-16: 4rem;     /* 64px */
+  --space-20: 5rem;     /* 80px */
+  --space-24: 6rem;     /* 96px */
+  --space-32: 8rem;     /* 128px */
+
+  /* Semantic spacing */
+  --space-xs: var(--space-2);
+  --space-sm: var(--space-4);
+  --space-md: var(--space-6);
+  --space-lg: var(--space-8);
+  --space-xl: var(--space-12);
+  --space-2xl: var(--space-16);
+  --space-3xl: var(--space-24);
+
+  /* ============================================
+     BORDER RADIUS
+     Card-inspired rounded corners
+     ============================================ */
+
+  --radius-none: 0;
+  --radius-sm: 0.25rem;    /* 4px */
+  --radius-md: 0.5rem;     /* 8px */
+  --radius-lg: 0.75rem;    /* 12px */
+  --radius-xl: 1rem;       /* 16px */
+  --radius-2xl: 1.5rem;    /* 24px */
+  --radius-full: 9999px;
+
+  /* Semantic radius */
+  --radius-card: var(--radius-xl);
+  --radius-button: var(--radius-lg);
+  --radius-badge: var(--radius-full);
+
+  /* ============================================
+     SHADOWS
+     Depth and elevation
+     ============================================ */
+
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1),
+               0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1),
+               0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1),
+               0 8px 10px -6px rgb(0 0 0 / 0.1);
+  --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+
+  /* Card shadows with glow */
+  --shadow-card: 0 4px 6px -1px rgb(0 0 0 / 0.2),
+                 0 2px 4px -2px rgb(0 0 0 / 0.2);
+  --shadow-card-hover: 0 20px 25px -5px rgb(0 0 0 / 0.3),
+                       0 8px 10px -6px rgb(0 0 0 / 0.3),
+                       0 0 30px -10px var(--color-electric);
+
+  --shadow-holographic: 0 0 20px -5px var(--color-psychic),
+                        0 0 40px -10px var(--color-water),
+                        0 0 60px -15px var(--color-electric);
+
+  /* ============================================
+     Z-INDEX SCALE
+     Stacking order
+     ============================================ */
+
+  --z-base: 0;
+  --z-dropdown: 1000;
+  --z-sticky: 1100;
+  --z-overlay: 1200;
+  --z-modal: 1300;
+  --z-popover: 1400;
+  --z-tooltip: 1500;
+
+  /* ============================================
+     TRANSITIONS
+     Animation durations and easings
+     ============================================ */
+
+  --duration-instant: 0ms;
+  --duration-fast: 150ms;
+  --duration-normal: 250ms;
+  --duration-slow: 350ms;
+  --duration-slower: 500ms;
+
+  --easing-linear: linear;
+  --easing-ease: ease;
+  --easing-in: cubic-bezier(0.4, 0, 1, 1);
+  --easing-out: cubic-bezier(0, 0, 0.2, 1);
+  --easing-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --easing-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+  /* Semantic transitions */
+  --transition-fast: var(--duration-fast) var(--easing-out);
+  --transition-normal: var(--duration-normal) var(--easing-out);
+  --transition-slow: var(--duration-slow) var(--easing-in-out);
+
+  /* ============================================
+     CONTAINER WIDTHS
+     Max widths for layouts
+     ============================================ */
+
+  --container-sm: 640px;
+  --container-md: 768px;
+  --container-lg: 1024px;
+  --container-xl: 1280px;
+  --container-2xl: 1536px;
+
+  /* ============================================
+     BREAKPOINTS (for reference in JS)
+     ============================================ */
+
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  --breakpoint-2xl: 1536px;
+}
+
+/* ============================================
+   DARK MODE OVERRIDES
+   (Currently default, but prepared for light mode toggle)
+   ============================================ */
+
+[data-theme="dark"] {
+  /* Already using dark theme by default */
+}
+
+[data-theme="light"] {
+  /* Future light mode support */
+  --color-bg-base: hsl(0, 0%, 98%);
+  --color-bg-elevated: hsl(0, 0%, 100%);
+  --color-bg-card: hsl(0, 0%, 95%);
+  --color-text-primary: hsl(0, 0%, 10%);
+  --color-text-secondary: hsl(0, 0%, 30%);
+  --color-text-tertiary: hsl(0, 0%, 50%);
+  --color-border-subtle: hsl(230, 10%, 85%);
+}
