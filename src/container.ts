@@ -5,10 +5,13 @@ import type { CardsProvider } from "./cards/domain/CardsProvider.ts";
 import { GAMEStoreCardsProvider } from "./cards/infrastructure/providers/GAMEStoreCardProvider.ts";
 import { MongoCardsRepository } from "./cards/infrastructure/repositories/CardsDataRepository.ts";
 import { SyncCards } from "./cards/use-cases/SyncCards.ts";
+import { config } from "./shared/config/infrastructure/config.ts";
 import { Token } from "./shared/config/domain/Token.ts";
 import { createHono } from "./shared/controllers/infrastructure/createHono.ts";
 import type { Logger } from "./shared/loggers/domain/Logger.ts";
 import { ConsoleLogger } from "./shared/loggers/infrastructure/ConsoleLogger.ts";
+import type { NotificationSender } from "./shared/notifications/domain/NotificationSender.ts";
+import { DiscordNotificationSender } from "./shared/notifications/infrastructure/DiscordNotificationSender.ts";
 import { mongoModule } from "./shared/persistence/infrastructure/CreateMongoClient.ts";
 import type { Scheduler } from "./shared/schedulers/domain/Scheduler.ts";
 import { NodeCronScheduler } from "./shared/schedulers/infrastructure/NodeCronScheduler.ts";
@@ -22,6 +25,13 @@ container.bind<Logger>(Token.LOGGER).toDynamicValue(ConsoleLogger.create);
 container
   .bind<Scheduler>(Token.SCHEDULER)
   .toDynamicValue(NodeCronScheduler.create);
+
+// Notifications
+container
+  .bind<NotificationSender>(Token.NOTIFICATION_SENDER)
+  .toDynamicValue(() =>
+    DiscordNotificationSender.create(config.notifications.discordWebhookUrl)
+  );
 
 // Load infrastructure modules
 container.loadSync(mongoModule);

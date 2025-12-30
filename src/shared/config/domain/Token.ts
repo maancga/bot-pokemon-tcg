@@ -14,6 +14,9 @@ export const Token = {
 
   // Providers
   CARDS_PROVIDER: Symbol.for("CARDS_PROVIDER"),
+
+  // Notifications
+  NOTIFICATION_SENDER: Symbol.for("NOTIFICATION_SENDER"),
 } as const;
 
 export type TokenType = (typeof Token)[keyof typeof Token];

@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import { FakeLogger } from "../../shared/loggers/infrastructure/FakeLogger.ts";
+import { FakeNotificationSender } from "../../shared/notifications/infrastructure/FakeNotificationSender.ts";
 import type { Card } from "../domain/Card.ts";
 import { FakeCardsProvider } from "../infrastructure/providers/FakeCardsProvider.ts";
 import { FakeCardsRepository } from "../infrastructure/repositories/FakeCardsRepository.ts";
@@ -9,13 +10,20 @@ describe("SyncDataUseCase", () => {
   let fakeProvider: FakeCardsProvider;
   let fakeRepository: FakeCardsRepository;
   let fakeLogger: FakeLogger;
+  let fakeNotificationSender: FakeNotificationSender;
   let useCase: SyncCards;
 
   beforeEach(() => {
     fakeProvider = new FakeCardsProvider();
     fakeRepository = new FakeCardsRepository();
     fakeLogger = new FakeLogger();
-    useCase = new SyncCards(fakeProvider, fakeRepository, fakeLogger);
+    fakeNotificationSender = new FakeNotificationSender();
+    useCase = new SyncCards(
+      fakeProvider,
+      fakeRepository,
+      fakeLogger,
+      fakeNotificationSender
+    );
   });
 
   it("should fetch cards from data provider", async () => {
@@ -83,20 +91,46 @@ describe("SyncDataUseCase", () => {
     expect(fakeRepository.getSavedCards()).toEqual(cards);
   });
 
-  it("should log progress during execution", async () => {
+  it("should send notification with synced cards", async () => {
+    const cards = await useCase.execute();
+
+    const lastCall = fakeNotificationSender.getLastCardSyncCall();
+    expect(lastCall).toBeDefined();
+    expect(lastCall?.storeName).toBe("GAME store");
+    expect(lastCall?.cards).toHaveLength(cards.length);
+    expect(lastCall?.cards[0]).toMatchObject({
+      title: cards[0].title,
+      price: cards[0].price,
+      link: cards[0].link,
+    });
+  });
+
+  it("should send notification with custom card data", async () => {
+    const customCards: Card[] = [
+      {
+        id: "custom-001",
+        source: "test-store",
+        title: "Custom Pokemon Card",
+        price: "£25.99",
+        link: "https://example.com/custom",
+        imageUrl: "https://example.com/image.png",
+        lastScrapedAt: new Date("2025-01-15T10:00:00Z"),
+        createdAt: new Date("2025-01-15T10:00:00Z"),
+      },
+    ];
+    fakeProvider.setCards(customCards);
+
     await useCase.execute();
 
-    expect(fakeLogger.logs).toContain(
-      expect.stringMatching(/Starting card sync/)
+    expect(fakeNotificationSender.wasCardSyncCalledWith("GAME store", 1)).toBe(
+      true
     );
-    expect(fakeLogger.logs).toContain(
-      expect.stringMatching(/Fetched \d+ cards/)
-    );
-    expect(fakeLogger.logs).toContain(
-      expect.stringMatching(/Saving cards to database/)
-    );
-    expect(fakeLogger.logs).toContain(
-      expect.stringMatching(/Cards saved successfully/)
-    );
+
+    const lastCall = fakeNotificationSender.getLastCardSyncCall();
+    expect(lastCall?.cards[0]).toMatchObject({
+      title: "Custom Pokemon Card",
+      price: "£25.99",
+      link: "https://example.com/custom",
+    });
   });
 });
