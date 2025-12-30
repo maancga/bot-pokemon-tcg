@@ -16,31 +16,27 @@ export class GAMEStoreCardsProvider implements CardsProvider {
         "--disable-setuid-sandbox",
         "--disable-dev-shm-usage", // Reduces shared memory usage
         "--disable-gpu",
-        "--disable-software-rasterizer",
         "--disable-extensions",
         "--disable-background-networking",
         "--disable-default-apps",
         "--disable-sync",
         "--disable-translate",
-        "--disable-features=site-per-process",
         "--metrics-recording-only",
         "--mute-audio",
         "--no-first-run",
         "--safebrowsing-disable-auto-update",
-        "--disable-blink-features=AutomationControlled",
-        "--single-process", // Run in single process to reduce memory overhead
       ],
     });
 
     try {
       const page = await browser.newPage();
 
-      // Block unnecessary resources to save memory
+      // Block heavy resources to save memory, but keep CSS for proper rendering
       await page.setRequestInterception(true);
       page.on("request", (req) => {
         const resourceType = req.resourceType();
-        // Only allow documents and scripts, block images, fonts, etc.
-        if (["image", "stylesheet", "font", "media"].includes(resourceType)) {
+        // Block images, fonts, and media, but allow stylesheets
+        if (["image", "font", "media"].includes(resourceType)) {
           req.abort();
         } else {
           req.continue();
