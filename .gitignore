@@ -37,3 +37,4 @@ pnpm-debug.log*
 debug-screenshot.png
 debug-page.html
 products.json
+.vercel
