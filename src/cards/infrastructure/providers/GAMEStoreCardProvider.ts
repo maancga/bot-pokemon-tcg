@@ -11,22 +11,52 @@ export class GAMEStoreCardsProvider implements CardsProvider {
   async getData(): Promise<Card[]> {
     const browser = await puppeteer.launch({
       headless: true,
-      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+      args: [
+        "--no-sandbox",
+        "--disable-setuid-sandbox",
+        "--disable-dev-shm-usage", // Reduces shared memory usage
+        "--disable-gpu",
+        "--disable-software-rasterizer",
+        "--disable-extensions",
+        "--disable-background-networking",
+        "--disable-default-apps",
+        "--disable-sync",
+        "--disable-translate",
+        "--disable-features=site-per-process",
+        "--metrics-recording-only",
+        "--mute-audio",
+        "--no-first-run",
+        "--safebrowsing-disable-auto-update",
+        "--disable-blink-features=AutomationControlled",
+        "--single-process", // Run in single process to reduce memory overhead
+      ],
     });
 
     try {
       const page = await browser.newPage();
+
+      // Block unnecessary resources to save memory
+      await page.setRequestInterception(true);
+      page.on("request", (req) => {
+        const resourceType = req.resourceType();
+        // Only allow documents and scripts, block images, fonts, etc.
+        if (["image", "stylesheet", "font", "media"].includes(resourceType)) {
+          req.abort();
+        } else {
+          req.continue();
+        }
+      });
 
       await page.setUserAgent(
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
       );
 
       await page.goto(this.url, {
-        waitUntil: "networkidle2",
-        timeout: 30000,
+        waitUntil: "domcontentloaded", // Changed from networkidle2 to reduce wait time
+        timeout: 20000, // Reduced timeout
       });
 
-      await new Promise((resolve) => setTimeout(resolve, 5000));
+      await new Promise((resolve) => setTimeout(resolve, 3000)); // Reduced wait time
 
       const cards = await page.evaluate(() => {
         const results: Array<{

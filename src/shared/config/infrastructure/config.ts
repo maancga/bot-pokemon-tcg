@@ -3,12 +3,21 @@ import { ConfigurationError } from "../../errors/domain/ConfigurationError.ts";
 
 // Zod schemas for runtime validation
 const databaseConfigSchema = z.object({
-  host: z.string().min(1, "Database host is required"),
-  port: z.number().int().positive("Database port must be a positive integer"),
-  username: z.string().min(1, "Database username is required"),
-  password: z.string().min(1, "Database password is required"),
-  database: z.string().min(1, "Database name is required"),
-});
+  uri: z.string().optional(), // MongoDB Atlas connection string (mongodb+srv://...)
+  host: z.string().optional(),
+  port: z.number().int().positive().optional(),
+  username: z.string().optional(),
+  password: z.string().optional(),
+  database: z.string().optional(),
+}).refine(
+  (data) => {
+    // Either uri must be provided, or all individual fields
+    return data.uri || (data.host && data.username && data.password && data.database);
+  },
+  {
+    message: "Either MONGODB_URI or individual DB fields (host, username, password, database) must be provided",
+  }
+);
 
 const appConfigSchema = z.object({
   port: z
@@ -60,6 +69,7 @@ function loadConfig(): Config {
       nodeEnv: process.env.NODE_ENV || "development",
     },
     db: {
+      uri: process.env.MONGODB_URI, // MongoDB Atlas connection string
       host: process.env.DB_HOST || "localhost",
       port: Number.parseInt(process.env.DB_PORT || "27017", 10),
       username: process.env.DB_USERNAME || "pokemon",
