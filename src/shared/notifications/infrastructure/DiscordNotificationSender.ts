@@ -61,6 +61,12 @@ export class DiscordNotificationSender implements NotificationSender {
         cardChunks.length
       );
       await this.send(message);
+
+      // Discord rate limit: ~30 requests/minute
+      // Wait 2 seconds between messages to stay under the limit
+      if (chunkIndex < cardChunks.length - 1) {
+        await new Promise(resolve => setTimeout(resolve, 2000));
+      }
     }
   }
 
