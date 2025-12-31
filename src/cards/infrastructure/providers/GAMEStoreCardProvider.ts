@@ -139,16 +139,14 @@ export class GAMEStoreCardsProvider implements CardsProvider {
       console.log(`[Scraper] Raw cards found: ${cards.length}`);
 
       const now = new Date();
-      const fullCards: Card[] = cards
-        .filter((card) => card.price === "MERCHANDISING")
-        .map((card) => ({
-          ...card,
-          source: "gamestore",
-          lastScrapedAt: now,
-          createdAt: now,
-        }));
+      const fullCards: Card[] = cards.map((card) => ({
+        ...card,
+        source: "gamestore",
+        lastScrapedAt: now,
+        createdAt: now,
+      }));
 
-      console.log(`[Scraper] Filtered cards (MERCHANDISING): ${fullCards.length}`);
+      console.log(`[Scraper] Cards to save: ${fullCards.length}`);
       return fullCards;
     } finally {
       await browser.close();
