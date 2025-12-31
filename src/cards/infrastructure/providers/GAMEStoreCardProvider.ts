@@ -94,11 +94,24 @@ export class GAMEStoreCardsProvider implements CardsProvider {
             const link = linkEl?.getAttribute("href") || "";
 
             const imgEl = element.querySelector("img");
-            const imageUrl =
-              imgEl?.getAttribute("src") ||
+            let imageUrl =
               imgEl?.getAttribute("data-src") ||
+              imgEl?.getAttribute("src") ||
               imgEl?.getAttribute("data-lazy-src") ||
               "";
+
+            // Normalize image URL
+            if (imageUrl) {
+              if (imageUrl.startsWith("//")) {
+                imageUrl = `https:${imageUrl}`;
+              } else if (!imageUrl.startsWith("http")) {
+                imageUrl = `https://www.game.es${imageUrl}`;
+              }
+              // Skip error placeholder images
+              if (imageUrl.includes("no_disponible.png")) {
+                imageUrl = "";
+              }
+            }
 
             if (title && title.length > 3) {
               results.push({
@@ -107,12 +120,10 @@ export class GAMEStoreCardsProvider implements CardsProvider {
                 price,
                 link: link.startsWith("http")
                   ? link
+                  : link.startsWith("//")
+                  ? `https:${link}`
                   : `https://www.game.es${link}`,
-                imageUrl: imageUrl.startsWith("http")
-                  ? imageUrl
-                  : imageUrl
-                  ? `https://www.game.es${imageUrl}`
-                  : "",
+                imageUrl,
               });
             }
           });
