@@ -136,6 +136,8 @@ export class GAMEStoreCardsProvider implements CardsProvider {
         return results;
       });
 
+      console.log(`[Scraper] Raw cards found: ${cards.length}`);
+
       const now = new Date();
       const fullCards: Card[] = cards
         .filter((card) => card.price === "MERCHANDISING")
@@ -146,6 +148,7 @@ export class GAMEStoreCardsProvider implements CardsProvider {
           createdAt: now,
         }));
 
+      console.log(`[Scraper] Filtered cards (MERCHANDISING): ${fullCards.length}`);
       return fullCards;
     } finally {
       await browser.close();
