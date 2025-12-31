@@ -83,9 +83,7 @@ function loadConfig(): Config {
         : true,
     },
     notifications: {
-      discordWebhookUrl:
-        process.env.DISCORD_WEBHOOK_URL ||
-        "https://discord.com/api/webhooks/1439408027567394880/OlKxRwrVaUJzo2KpffdEkoFtT2zc8M0Y_Giz2Peenk8PS0CkJlnUOIiL1qbE4cEri-gl",
+      discordWebhookUrl: process.env.DISCORD_WEBHOOK_URL || "",
     },
   };
 
