@@ -3,7 +3,7 @@ import { Container } from "inversify";
 import type { CardsRepository } from "./cards/domain/CardsDataRepository.ts";
 import type { CardsProvider } from "./cards/domain/CardsProvider.ts";
 import { GAMEStoreCardsProvider } from "./cards/infrastructure/providers/GAMEStoreCardProvider.ts";
-import { MongoCardsRepository } from "./cards/infrastructure/repositories/CardsDataRepository.ts";
+import { MongoCardsRepository } from "./cards/infrastructure/repositories/MongoCardsRepository.ts";
 import { SyncCards } from "./cards/use-cases/SyncCards.ts";
 import { config } from "./shared/config/infrastructure/config.ts";
 import { Token } from "./shared/config/domain/Token.ts";

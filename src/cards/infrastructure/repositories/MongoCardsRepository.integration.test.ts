@@ -6,7 +6,7 @@ import {
 import { Db, MongoClient } from "mongodb";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import type { Card } from "../../domain/Card.ts";
-import { MongoCardsRepository } from "./CardsDataRepository.ts";
+import { MongoCardsRepository } from "./MongoCardsRepository.ts";
 
 describe("MongoCardsRepository (integration)", () => {
   let client: MongoClient;
