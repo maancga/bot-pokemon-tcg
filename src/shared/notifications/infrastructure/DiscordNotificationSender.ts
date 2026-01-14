@@ -42,7 +42,7 @@ export class DiscordNotificationSender implements NotificationSender {
       `✅ Sync completed: ${cards.length} cards from ${storeName}`
     );
 
-    const CARDS_CHUNK_SIZE = 10;
+    const CARDS_CHUNK_SIZE = 5;
     const cardChunks: CardData[][] = [];
 
     for (
@@ -75,11 +75,30 @@ export class DiscordNotificationSender implements NotificationSender {
     chunkNumber: number,
     totalChunks: number
   ): string {
+    const DISCORD_MAX_LENGTH = 2000;
     const header = `📦 Cards ${chunkNumber}/${totalChunks}:\n\n`;
-    const cardList = cards
-      .map((card) => `**${card.title}** - ${card.price}\n${card.link}`)
-      .join("\n\n");
+    
+    const formattedCards: string[] = [];
+    let currentLength = header.length;
 
-    return header + cardList;
+    for (const card of cards) {
+      // Truncate title if too long
+      const title = card.title.length > 60 
+        ? card.title.substring(0, 57) + "..." 
+        : card.title;
+      
+      const cardText = `**${title}** - ${card.price}\n${card.link}`;
+      const cardWithSeparator = cardText + "\n\n";
+
+      // Check if adding this card would exceed the limit
+      if (currentLength + cardWithSeparator.length > DISCORD_MAX_LENGTH - 50) {
+        break;
+      }
+
+      formattedCards.push(cardText);
+      currentLength += cardWithSeparator.length;
+    }
+
+    return header + formattedCards.join("\n\n");
   }
 }
