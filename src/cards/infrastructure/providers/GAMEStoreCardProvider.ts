@@ -14,7 +14,7 @@ export class GAMEStoreCardsProvider implements CardsProvider {
       args: [
         "--no-sandbox",
         "--disable-setuid-sandbox",
-        "--disable-dev-shm-usage", // Reduces shared memory usage
+        "--disable-dev-shm-usage",
         "--disable-gpu",
         "--disable-extensions",
         "--disable-background-networking",
@@ -35,7 +35,6 @@ export class GAMEStoreCardsProvider implements CardsProvider {
       await page.setRequestInterception(true);
       page.on("request", (req) => {
         const resourceType = req.resourceType();
-        // Block images, fonts, and media, but allow stylesheets
         if (["image", "font", "media"].includes(resourceType)) {
           req.abort();
         } else {
@@ -48,11 +47,17 @@ export class GAMEStoreCardsProvider implements CardsProvider {
       );
 
       await page.goto(this.url, {
-        waitUntil: "domcontentloaded", // Changed from networkidle2 to reduce wait time
-        timeout: 20000, // Reduced timeout
+        waitUntil: "networkidle2",
+        timeout: 25000,
       });
 
-      await new Promise((resolve) => setTimeout(resolve, 3000)); // Reduced wait time
+      // Wait for products to load (they load dynamically via JavaScript)
+      await page.waitForSelector(".search-item", { timeout: 15000 }).catch(() => {
+        console.log("[Scraper] Warning: .search-item selector not found, page might not have loaded properly");
+      });
+
+      // Additional wait for dynamic content to fully render
+      await new Promise((resolve) => setTimeout(resolve, 2000));
 
       const cards = await page.evaluate(() => {
         const results: Array<{
@@ -63,75 +68,74 @@ export class GAMEStoreCardsProvider implements CardsProvider {
           imageUrl: string;
         }> = [];
 
-        const selectors = [
-          "article",
-          '[class*="product"]',
-          '[class*="item"]',
-          'li[class*="product"]',
-          'div[class*="product"]',
-          ".search-results article",
-          ".results article",
-        ];
+        // Use the correct selector for GAME.es search results
+        const items = document.querySelectorAll(".search-item");
 
-        for (const selector of selectors) {
-          const elements = document.querySelectorAll(selector);
+        items.forEach((item: Element) => {
+          // Try to get data from data attributes first (most reliable)
+          const linkEl = item.querySelector("a[data-list-item-click]");
+          const dataPrice = linkEl?.getAttribute("data-list-item-price");
+          const dataName = linkEl?.getAttribute("data-list-item-name");
+          const dataId = linkEl?.getAttribute("data-list-item-click");
 
-          elements.forEach((element: Element) => {
-            const titleEl = element.querySelector(
-              'a[title], h3, h2, h4, .title, [class*="title"]'
-            );
-            const title =
-              titleEl?.textContent?.trim() ||
-              titleEl?.getAttribute("title") ||
-              "";
+          // Fallback to DOM elements
+          const titleEl = item.querySelector("h3.title a, .title a");
+          const title = dataName || titleEl?.textContent?.trim() || "";
 
-            const priceEl = element.querySelector(
-              '[class*="price"], .price, span'
-            );
-            const price = priceEl?.textContent?.trim() || "";
-
-            const linkEl = element.querySelector("a[href]");
-            const link = linkEl?.getAttribute("href") || "";
-
-            const imgEl = element.querySelector("img");
-            let imageUrl =
-              imgEl?.getAttribute("data-src") ||
-              imgEl?.getAttribute("src") ||
-              imgEl?.getAttribute("data-lazy-src") ||
-              "";
-
-            // Normalize image URL
-            if (imageUrl) {
-              if (imageUrl.startsWith("//")) {
-                imageUrl = `https:${imageUrl}`;
-              } else if (!imageUrl.startsWith("http")) {
-                imageUrl = `https://www.game.es${imageUrl}`;
-              }
-              // Skip error placeholder images
-              if (imageUrl.includes("no_disponible.png")) {
-                imageUrl = "";
-              }
+          // Get price from data attribute or parse from DOM
+          let price = "";
+          if (dataPrice) {
+            price = `${dataPrice} €`;
+          } else {
+            const priceEl = item.querySelector(".prices-wrap, .price");
+            const priceText = priceEl?.textContent?.trim() || "";
+            // Extract price pattern like "199'99€" or "31,99 €"
+            const priceMatch = priceText.match(/(\d+)[',](\d{2})\s*€/);
+            if (priceMatch) {
+              price = `${priceMatch[1]}.${priceMatch[2]} €`;
             }
-
-            if (title && title.length > 3) {
-              results.push({
-                id: title,
-                title,
-                price,
-                link: link.startsWith("http")
-                  ? link
-                  : link.startsWith("//")
-                  ? `https:${link}`
-                  : `https://www.game.es${link}`,
-                imageUrl,
-              });
-            }
-          });
-
-          if (results.length > 0) {
-            break;
           }
-        }
+
+          // Get link
+          const href = linkEl?.getAttribute("href") || titleEl?.getAttribute("href") || "";
+          const link = href.startsWith("http")
+            ? href
+            : href.startsWith("//")
+            ? `https:${href}`
+            : href
+            ? `https://www.game.es${href}`
+            : "";
+
+          // Get image
+          const imgEl = item.querySelector("img");
+          let imageUrl =
+            imgEl?.getAttribute("src") ||
+            imgEl?.getAttribute("data-src") ||
+            imgEl?.getAttribute("data-lazy-src") ||
+            "";
+
+          if (imageUrl) {
+            if (imageUrl.startsWith("//")) {
+              imageUrl = `https:${imageUrl}`;
+            } else if (!imageUrl.startsWith("http")) {
+              imageUrl = `https://www.game.es${imageUrl}`;
+            }
+            if (imageUrl.includes("no_disponible.png")) {
+              imageUrl = "";
+            }
+          }
+
+          // Only add valid products with actual product links
+          if (title && title.length > 3 && link.includes("/coleccionables/")) {
+            results.push({
+              id: dataId || title,
+              title,
+              price,
+              link,
+              imageUrl,
+            });
+          }
+        });
 
         return results;
       });
